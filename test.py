@@ -23,6 +23,7 @@ criterion = torch.nn.CrossEntropyLoss()
 loss_hist = []
 for epoch in range(epochs):
     running_loss = []
+    print(f'Start Epoch {epoch}/{epochs}', end=" ")
     for batch_idx, (samples, labels) in enumerate(train_loader):
         samples.to(device)
         labels.unsqueeze(1).to(device)
@@ -33,9 +34,11 @@ for epoch in range(epochs):
         loss.backward()
         optimizer.step()
         running_loss.append(loss.item())
-    loss_hist.append(sum(running_loss)/len(running_loss))
-
-
+    avg_loss = sum(running_loss)/len(running_loss)
+    print(f'Epoch {epoch}/{epochs}, Loss: {avg_loss}')
+    loss_hist.append(avg_loss)
+print("Saving model...")
+model.save("kan.pt","exps")
 plt.plot(range(epochs),loss_hist)
 plt.title("Loss per epochs")
 plt.savefig('output.png')
