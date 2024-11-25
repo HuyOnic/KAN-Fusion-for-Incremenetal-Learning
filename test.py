@@ -38,7 +38,7 @@ for epoch in range(epochs):
     print(f'Epoch {epoch}/{epochs}, Loss: {avg_loss}')
     loss_hist.append(avg_loss)
 print("Saving model...")
-model.save("kan.pt","exps")
+torch.save("kan.pt","exps")
 plt.plot(range(epochs),loss_hist)
 plt.title("Loss per epochs")
 plt.savefig('output.png')
