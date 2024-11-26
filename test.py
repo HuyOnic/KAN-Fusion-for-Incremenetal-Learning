@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from dataset import Capture_128
-
+torch.manual_seed(24)
 kan_width = [128,257,13]
 epochs = 100
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -18,7 +18,7 @@ model.to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 dataset = Capture_128(root='dataset/Capture_test_128.feather', train=True, transform=transforms.ToTensor())
 train_loader = DataLoader(dataset, batch_size=128, shuffle=True)
-
+print(model)
 criterion = torch.nn.CrossEntropyLoss()
 loss_hist = []
 for epoch in range(epochs):
@@ -42,3 +42,4 @@ torch.save("kan.pt","exps")
 plt.plot(range(epochs),loss_hist)
 plt.title("Loss per epochs")
 plt.savefig('output.png')
+
