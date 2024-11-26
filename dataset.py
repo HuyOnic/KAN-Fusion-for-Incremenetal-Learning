@@ -6,25 +6,26 @@ import numpy as np
 from utils.preprocessing import Preprocessing
 import matplotlib.pyplot as plt
 from collections import Counter
+from imblearn.under_sampling import RandomUnderSampler
+
 class Capture_128(Dataset):
     def __init__(self, root, isTrain=True, transform=None):
+        super(Capture_128, self).__init__()
         self.root = root
-        self.data_frame = pd.read_feather(root)
         self.transform = transform
         self.isTrain = isTrain
         self.samples, self.labels = self._get_data()
 
     def _get_data(self):
-        samples = np.array(self.data_frame.iloc[:,1:-1])
-        labels = np.array(self.data_frame.iloc[:,-1])
+        data_frame = pd.read_feather(self.root)
+        samples = np.array(data_frame.iloc[:,1:-1])
+        labels = np.array(data_frame.iloc[:,-1])
         if self.isTrain:
             pre_processing = Preprocessing()
-            samples, labels = pre_processing.fit_transform(samples, labels) # Make balanced dataset
-        for col in range(samples.shape[1]):
-            x_i = samples[:, col]
-            x_max = np.max(x_i)
-            x_min = np.min(x_i)
-            samples[:,col] = (x_i-x_min)/(x_max-x_min)
+            # samples, labels = pre_processing.fit_transform(samples, labels) # Make balanced dataset
+            samples, labels = pre_processing.fit_transform(samples, labels, "mean_sampling")
+            print(samples.shape)
+        samples = samples/255
         return samples, labels 
     
     def __len__(self):
@@ -34,5 +35,8 @@ class Capture_128(Dataset):
         return torch.Tensor(self.samples[index]), int(self.labels[index])
     
 if __name__=="__main__":
-    dataset = Capture_128('dataset/Capture_train_128.feather')
+
+    dataset = Capture_128('dataset/Capture_test_128.feather', isTrain=False)
+    print(max(dataset.samples[:,0]))
     freqs = Counter(np.sort(dataset.labels))
+    print(freqs)
