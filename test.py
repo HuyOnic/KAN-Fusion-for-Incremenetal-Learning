@@ -7,21 +7,21 @@ import numpy as np
 from model.KAN import KAN
 from torch.utils.data import DataLoader
 from torchvision import transforms
-
+from tqdm import tqdm
 from dataset import Capture_128
-torch.manual_seed(24)
+torch.manual_seed(2024)
 kan_width = [128,257,13]
-epochs = 100
+epochs = 300
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = KAN(layers_hidden=kan_width)
 model.to(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-dataset = Capture_128(root='dataset/Capture_test_128.feather', train=True, transform=transforms.ToTensor())
-train_loader = DataLoader(dataset, batch_size=128, shuffle=True)
+dataset = Capture_128(root='dataset/Capture_test_128.feather', isTrain=True, transform=transforms.ToTensor())
+train_loader = DataLoader(dataset, batch_size=256, shuffle=True)
 print(model)
 criterion = torch.nn.CrossEntropyLoss()
 loss_hist = []
-for epoch in range(epochs):
+for epoch in tqdm(range(epochs)):
     running_loss = []
     print(f'Start Epoch {epoch}/{epochs}', end=" ")
     for batch_idx, (samples, labels) in enumerate(train_loader):

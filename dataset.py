@@ -20,7 +20,6 @@ class Capture_128(Dataset):
         if self.isTrain:
             pre_processing = Preprocessing()
             samples, labels = pre_processing.fit_transform(samples, labels) # Make balanced dataset
-        print(samples.shape)
         for col in range(samples.shape[1]):
             x_i = samples[:, col]
             x_max = np.max(x_i)
